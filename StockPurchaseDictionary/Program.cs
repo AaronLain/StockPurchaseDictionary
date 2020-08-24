@@ -9,11 +9,14 @@ namespace StockPurchaseDictionary
     {
         static Dictionary<string, double> Consolidator(string name, int shares, double price)
         {
+            // create a new dictionary with the name and the product of shares and price
             var consolidatedDict = new Dictionary<string, double>();
 
             var prod = shares * price;
 
-            consolidatedDict.Add(name, prod);
+            var roundPrice = Math.Round(prod, 2);
+
+            consolidatedDict.Add(name, roundPrice);
 
             return consolidatedDict;
         }
@@ -24,9 +27,6 @@ namespace StockPurchaseDictionary
             stocks.Add("GE", "General Electric");
             stocks.Add("AAPL", "Apple");
             stocks.Add("IBM", "IBM");
-
-            string GM = stocks["GE"];
-            WriteLine($"{GM}");
 
             var purchases = new List<(string ticker, int shares, double price)>();
 
@@ -42,23 +42,30 @@ namespace StockPurchaseDictionary
             purchases.Add((ticker: "IBM", shares: 32, price: 119.87));
             purchases.Add((ticker: "IBM", shares: 80, price: 129.52));
 
+            // perform math and round the doubles to two decimals, returns dictionary, adds to list
             var stockDictionary = new List<Dictionary<string, double>>();
 
             foreach (var purchase in purchases)
             {
                 stockDictionary.Add(Consolidator(purchase.ticker, purchase.shares, purchase.price));
             }
-
+            // flattens list of dictionaries,
             var stockTotals = stockDictionary.SelectMany(item => item)
-                // above flattens list of dictionaries, then groups them together
+                 // then groups them together
                 .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
-                // create new dictionary with single key value and sum of all products
-                .ToDictionary(k => k.Key, k => k.Sum());
+                // creates new dictionary with single key value and sum of all products
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Sum());
 
+            //iterate and print out the stocks full name, and the consolidated prices of shares
             foreach (var item in stockTotals)
             {
-                WriteLine($"{item.Key} {item.Value}");
-
+                foreach (var stock in stocks)
+                {
+                    if (item.Key == stock.Key)
+                    {
+                        WriteLine($"{stock.Value} {item.Value}");
+                    }
+                }
             }
 
 
