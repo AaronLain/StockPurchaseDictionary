@@ -67,8 +67,6 @@ namespace StockPurchaseDictionary
                     }
                 }
             }
-
-
         }
     }
 }
